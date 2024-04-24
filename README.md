@@ -116,6 +116,9 @@ Vamos criar um Dockerfile na raiz do projeto que define [dois estágios](https:/
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 COPY . .
+
+RUN apt-get update
+RUN apt-get install maven -y
 RUN mvn clean package
 
 # Segundo estágio do Dockerfile para montar o container de execução da aplicação
@@ -251,7 +254,7 @@ Controllers implementados com suporte para endpoints de uma API REST que faz int
 
 #### Passo a Passo:
 
-**Configuração do servidor PostgreSQL no Render.com**
+##### **Configuração do servidor PostgreSQL no Render.com**
 
 Siga os passos descritos a seguir:
 
@@ -289,9 +292,6 @@ public class Produto {
 }
 ```
 
-**Implementação dos Controllers para Views**
-
-Para montar nossa camada de views, vamos utilizar um mecanismo de templates utilizado pelo Spring Boot que é o Thymeleaf. O mecanismo de templates promove a separação da camada de interface da lógica do sistema.
 
 ##### Implementação dos Controllers para endpoints de uma API Rest
 
