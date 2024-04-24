@@ -37,14 +37,14 @@ Estrutura de projeto Spring Boot configurada com pacotes separados para controll
 **Criar um controller inicial:**
 
 ```java
-package com.exemplo.controllers;
+package network.webtech.labspringmvc.controllers;
 
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-public class MainController {
-
+@Controller
+public class HelloWorld {
+  
     @GetMapping("/")
     public String index() {
         return "Hello, World!";
@@ -55,10 +55,9 @@ public class MainController {
 **Executar a aplicação:**
 Para executar a aplicação Spring Boot, você pode usar o Maven para compilar e executar o projeto. Na raiz do projeto, execute o seguinte comando:
 
-```bash  
+```bash
 mvn spring-boot:run
 ```
-
 
 **Exemplo de Estrutura de Projeto:**
 
@@ -96,6 +95,7 @@ Com esta estrutura básica de projeto configurada, estamos prontos para avançar
 **Descrição:** Nesta etapa, vamos configurar um ambiente de desenvolvimento local utilizando Docker para criar e gerenciar containers para o back end da aplicação. Além disso, vamos realizar o deploy da aplicação utilizando o GitHub e o Render, uma plataforma de hospedagem na nuvem.
 
 **Conhecimentos Fundamentais:**
+
 - Docker: Tecnologia de contêinerização que permite empacotar, distribuir e executar aplicações em ambientes isolados.
 - Dockerfile e docker-compose: Arquivos de configuração utilizados para definir a construção e a execução de containers Docker.
 - Git e GitHub: Ferramentas de controle de versão e hospedagem de código fonte, respectivamente.
@@ -147,7 +147,7 @@ docker compose up --build -d
 ```
 
 2. **Deploy da Aplicação Utilizando GitHub e Render:**
-Uma vez que o ambiente de desenvolvimento local com Docker está configurado e funcionando corretamente, vamos realizar o deploy da aplicação utilizando o GitHub e o Render. Siga os passos abaixo para realizar o deploy:
+   Uma vez que o ambiente de desenvolvimento local com Docker está configurado e funcionando corretamente, vamos realizar o deploy da aplicação utilizando o GitHub e o Render. Siga os passos abaixo para realizar o deploy:
 
    a. Faça o commit e o push do código fonte para um repositório no GitHub.
    b. Crie uma conta no [Render](https://render.com/) e crie um novo Web Service, e escolha o deploy a partir de uma conexão com um repositório do GitHub.
@@ -157,12 +157,12 @@ Uma vez que o ambiente de desenvolvimento local com Docker está configurado e f
 
 Com isso, você terá configurado um ambiente de desenvolvimento local utilizando Docker e realizado o deploy da sua aplicação utilizando o GitHub e o Render. Este ambiente permitirá que você desenvolva e teste sua aplicação de forma isolada e também a disponibilize para acesso externo na nuvem.
 
-
-### Etapa 3: Implementação de Controllers, Views e Endpoints REST
+### Etapa 3: Implementação de Controllers para Views
 
 **Descrição:** Nesta etapa, vamos implementar controllers para lidar com as requisições HTTP voltadas para a obtenção de Views do padrão MVC e para acesso a endpoints REST para as operações CRUD. Utilizaremos o Spring MVC para criar controllers que suportem tanto views baseadas em templates como endpoints de uma API REST.
 
 **Conhecimentos Fundamentais:**
+
 - Spring MVC: Framework que facilita o desenvolvimento de aplicações web seguindo o padrão Model-View-Controller.
 - APIs REST: Conjunto de padrões e princípios de arquitetura de software para a criação de serviços web que utilizam HTTP de forma consistente.
 
@@ -173,54 +173,140 @@ Controllers implementados com suporte a views baseadas em templates e para endpo
 
 #### Passo a Passo:
 
-1. **Implementação dos Controllers para Views e Endpoints REST:**
+**Implementação dos Controllers para Views**
 
-   a. Crie um controller para lidar com as requisições relacionadas à interface de usuário (Views).
+Para montar nossa camada de views, vamos utilizar um mecanismo de templates utilizado pelo Spring Boot que é o Thymeleaf. O mecanismo de templates promove a separação da camada de interface da lógica do sistema.
+
+Para iniciar, adicione ao arquivo pom.xml uma dependência do Spring Boot o pacote do Thymeleaf.
+
+```xml
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
+
+Agora, crie um controller para lidar com as requisições relacionadas à interface de usuário (Views).
 
 ```java
+package network.webtech.labspringmvc.controllers;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class ViewController {
+public class HelloWorld {
+  
+    // Requisição simples
+    @GetMapping("/")
+    public String index (Model model) {
+	// Prepara um modelo com os dados a serem utilizados pelo template
+        model.addAttribute("message", "Bem vindo ao Lab Spring MVC!");
 
-    @GetMapping("/home")
-    public String home(Model model) {
-        // Lógica para carregar dados e passá-los para a view
-        model.addAttribute("message", "Bem-vindo à nossa aplicação!");
-        return "home"; // Retorna o nome do template a ser renderizado
+        // Informa qual template será utilizado (home.html))
+        return "home";
     }
 
-    // Outros métodos para lidar com outras páginas da aplicação...
+    // Passando parâmetros no path da URL
+    @GetMapping("/message/{msg}")
+    public String message (@PathVariable (value="msg") String msg, Model model) {
+        model.addAttribute("message", msg);
+        return "home";
+    }
+
 }
 ```
 
-b. Crie um template ThymeLeaf (por exemplo, `home.html`) na pasta `resources/templates` para renderizar a view.
+Crie um template ThymeLeaf (por exemplo, `home.html`) na pasta `resources/templates` para renderizar a view.
 
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Minha Aplicação</title>
+    <title>Lab Spring MVC</title>
 </head>
 <body>
     <h1 th:text="${message}"></h1>
-    <!-- Outros elementos HTML e lógica de template -->
 </body>
 </html>
 ```
 
-c. Crie um controller REST para lidar com as requisições relacionadas à API.
+### Etapa 4: Implementação de Controllers para APIs Rest
+
+**Descrição:** Nesta etapa, vamos implementar controllers para lidar com as requisições HTTP voltadas para acesso a endpoints REST para as operações CRUD. O Spring Boot já fornece todos os recursos para isso.
+
+**Conhecimentos Fundamentais:**
+
+* Spring MVC: Framework para desenvolvimento de aplicações web.
+* APIs REST: Conjunto de padrões de arquitetura para comunicação entre sistemas.
+* Object-Relational Mapping (ORM): Mapeamento de objetos para dados armazenados em um banco de dados relacional.
+* JPA (Java Persistence API), Hibernate.
+* Bancos de Dados Relacionais: Estruturas de dados que armazenam informações organizadas em tabelas relacionadas.
+
+**Produto Esperado:**
+Controllers implementados com suporte para endpoints de uma API REST que faz interfaces para operações de CRUD com entidades da aplicação.
+
+---
+
+#### Passo a Passo:
+
+**Configuração do servidor PostgreSQL no Render.com**
+
+Siga os passos descritos a seguir:
+
+* Crie uma conta no [Render](https://render.com/) ou acesse sua conta existente.
+* Crie um novo serviço e selecione "PostgreSQL" como o tipo de serviço.
+* Siga as instruções para configurar e provisionar o servidor PostgreSQL.
+* Anote as credenciais de acesso (host, porta, usuário, senha, nome do banco de dados).
+
+##### Implementação das classes Model e Repository
+
+Para iniciar, precisamos adicionar uma dependência importante relacionada ao suporte do Sprint Boot para o JPA.
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+```
+
+```
+import javax.persistence.*;
+
+@Entity
+public class Produto {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nome;
+
+    private double preco;
+
+    // getters e setters
+}
+```
+
+**Implementação dos Controllers para Views**
+
+Para montar nossa camada de views, vamos utilizar um mecanismo de templates utilizado pelo Spring Boot que é o Thymeleaf. O mecanismo de templates promove a separação da camada de interface da lógica do sistema.
+
+##### Implementação dos Controllers para endpoints de uma API Rest
+
+Nesse momento vamos montar uma API Rest fornecendo acesso a um recurso de produtos. Para iso, vamos criar um novo controller REST, anotado com `@RestController` para lidar com as requisições relacionadas à API.
 
 ```java
+package network.webtech.labspringmvc.controllers;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/produtos")
-public class ProdutoController {
+public class Produtos {
 
     @Autowired
     private ProdutoService produtoService;
@@ -242,24 +328,3 @@ public class ProdutoController {
 d. Implemente os métodos no service correspondente para realizar as operações CRUD.
 
 Com isso, você terá implementado controllers para lidar com requisições voltadas para a obtenção de views do padrão MVC e para acesso a endpoints REST para as operações CRUD com entidades da aplicação. Essa etapa é fundamental para definir a interação entre o front end e o back end da aplicação.
-
-
-### Etapa 5: Definição dos Services, Models e Repositories integrados com o Banco de Dados
-
-1. **Descrição**: Definir as entidades (models) da aplicação conectadas ao banco de dados, criar interfaces de repositório (repositories) para isolar a lógica de acesso aos dados e implementar classes de serviço para encapsular a lógica de negócio da aplicação..
-2. **Conhecimentos Fundamentais**: Injeção de dependência, separação de responsabilidades, JPA (Java Persistence API), Hibernate, Padrão arquitetural MVC.
-3. **Produto Esperado**: Entidades Java criadas e anotadas com as respectivas anotações do JPA, interfaces de repositório definidas para cada entidade. Classes de serviço criadas para cada entidade, com métodos para executar operações específicas de negócio.
-
-### Etapa 6: Integração do Back End com o Front End
-
-1. **Descrição**: Integrar o back end desenvolvido com o front end utilizando requisições HTTP.
-2. **Conhecimentos Fundamentais**: Consumo de APIs REST, comunicação entre front end e back end.
-3. **Produto Esperado**: Front end conectado ao back end, permitindo que as operações CRUD sejam realizadas de forma eficiente.
-
-### Etapa 7: Implantação da Aplicação em Containers Docker
-
-1. **Descrição**: Preparar a aplicação para implantação em ambiente de produção, utilizando containers Docker.
-2. **Conhecimentos Fundamentais**: Implantação de aplicações em Docker, Dockerfile multi-stage, docker-compose para ambiente de produção.
-3. **Produto Esperado**: Aplicação empacotada em containers Docker, pronta para ser implantada em um ambiente de produção ou em servidores na nuvem.
-
-Ao seguir este roteiro, o aluno terá uma compreensão sólida dos conceitos fundamentais de desenvolvimento de software com Spring Boot MVC, integração de front end e back end, e implantação de aplicações em containers Docker. Cada etapa proporciona pequenas entregas que permitem ao aluno perceber sua progressão no aprendizado.
