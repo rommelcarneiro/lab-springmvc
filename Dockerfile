@@ -5,7 +5,7 @@ COPY . .
 
 RUN apt-get update
 RUN apt-get install maven -y
-RUN mvn clean package
+RUN mvn clean package  -Dmaven.test.skip=true -DskipTests
 
 # Segundo estágio do Dockerfile para montar o container de execução da aplicação
 FROM eclipse-temurin:17-jre

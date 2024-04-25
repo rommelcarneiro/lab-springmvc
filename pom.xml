@@ -43,7 +43,7 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.6.2</version>
 			<scope>runtime</scope>
-		</dependency>∑		
+		</dependency>
 	</dependencies>
 
 	<build>
